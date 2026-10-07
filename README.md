@@ -1,2 +1,1 @@
 # ppn
-Noise protocol VPN
