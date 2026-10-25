@@ -9,8 +9,12 @@ import Crypto.Noise
 import Crypto.Noise.Cipher.AESGCM
 import Crypto.Noise.DH
 import Crypto.Noise.DH.Curve25519
-import Crypto.Noise.HandshakePatterns (noiseIK)
+import Crypto.Noise.HandshakePatterns (noiseKX)
 import Crypto.Noise.Hash.SHA256
+import Data.ByteArray (convert)
+import Data.ByteString (ByteString)
+import qualified Data.Text.Encoding as Text
+import qualified Data.Text.IO as Text
 
 someFunc :: IO ()
 someFunc = do
@@ -38,10 +42,10 @@ someFunc = do
           dho = defaultHandshakeOpts ResponderRole "prologue" :: HandshakeOpts Curve25519
 
   -- Initiator
-  let ins = noiseState aliceHO noiseIK :: NoiseState AESGCM Curve25519 SHA256
+  let ins = noiseState aliceHO noiseKX :: NoiseState AESGCM Curve25519 SHA256
 
   -- Responder
-  let rns = noiseState bobHO noiseIK :: NoiseState AESGCM Curve25519 SHA256
+  let rns = noiseState bobHO noiseKX :: NoiseState AESGCM Curve25519 SHA256
 
   -- Initiator
   let writeResult = writeMessage "They must find it difficult -- those who have taken authority as the truth, rather than truth as the authority." ins
@@ -54,7 +58,8 @@ someFunc = do
   -- Responder
   let readResult = readMessage ct rns
   case readResult of
-    NoiseResultMessage plaintext _ -> print plaintext
+    NoiseResultMessage plaintext _ ->
+      Text.putStrLn (Text.decodeUtf8 (convert plaintext :: ByteString))
     NoiseResultNeedPSK _ -> error "something terrible happened"
     NoiseResultException _ -> error "something terrible happened"
 
