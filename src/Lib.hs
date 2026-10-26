@@ -11,7 +11,6 @@ import Crypto.Noise.DH
 import Crypto.Noise.DH.Curve25519
 import Crypto.Noise.HandshakePatterns (noiseKX)
 import Crypto.Noise.Hash.SHA256
-import Data.ByteArray (convert)
 import Data.ByteString (ByteString)
 import qualified Data.Text.Encoding as Text
 import qualified Data.Text.IO as Text
@@ -29,13 +28,13 @@ someFunc = do
   let aliceHO =
         setLocalStatic (Just aliceStatic)
           . setLocalEphemeral (Just aliceEphemeral)
-          . setRemoteStatic (Just $ snd bobStatic)
           $ dho
         where
           dho = defaultHandshakeOpts InitiatorRole "prologue" :: HandshakeOpts Curve25519
 
   let bobHO =
         setLocalStatic (Just bobStatic)
+          . setRemoteStatic (Just $ snd aliceStatic)
           . setLocalEphemeral (Just bobEphemeral)
           $ dho
         where
@@ -52,7 +51,7 @@ someFunc = do
 
   let ct = case writeResult of
         NoiseResultMessage ciphertext _ -> ciphertext
-        NoiseResultNeedPSK _ -> error "something terrible happened" -- will never happen in Noise_IK
+        NoiseResultNeedPSK _ -> error "something terrible happened"
         NoiseResultException _ -> error "something terrible happened"
 
   -- Responder
