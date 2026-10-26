@@ -3,17 +3,25 @@ module Lib
   )
 where
 
-import Crypto.Noise
 -- Used to generate and manipulate keys
 
+import Control.Exception (throwIO)
+import Crypto.Noise
 import Crypto.Noise.Cipher.AESGCM
 import Crypto.Noise.DH
 import Crypto.Noise.DH.Curve25519
 import Crypto.Noise.HandshakePatterns (noiseKX)
 import Crypto.Noise.Hash.SHA256
 import Data.ByteString (ByteString)
-import qualified Data.Text.Encoding as Text
-import qualified Data.Text.IO as Text
+
+handleNoiseResult ::
+  NoiseResult c d h ->
+  IO (ScrubbedBytes, NoiseState c d h)
+handleNoiseResult result =
+  case result of
+    NoiseResultMessage bytes nextState -> pure (bytes, nextState)
+    NoiseResultNeedPSK _ -> fail "Fatal error" -- this would never happen in KX
+    NoiseResultException exception -> throwIO exception
 
 someFunc :: IO ()
 someFunc = do
@@ -46,20 +54,18 @@ someFunc = do
   -- Responder
   let rns = noiseState bobHO noiseKX :: NoiseState AESGCM Curve25519 SHA256
 
-  -- Initiator
-  let writeResult = writeMessage "They must find it difficult -- those who have taken authority as the truth, rather than truth as the authority." ins
+  -- 1. Alice -> Bob
+  (msg1, ins1) <- handleNoiseResult $ writeMessage "first" ins
+  print (convert msg1 :: ByteString)
+  (msg, rns1) <- handleNoiseResult $ readMessage msg1 rns
 
-  let ct = case writeResult of
-        NoiseResultMessage ciphertext _ -> ciphertext
-        NoiseResultNeedPSK _ -> error "something terrible happened"
-        NoiseResultException _ -> error "something terrible happened"
+  -- 2. Bob -> Alice
+  (msg2, rns2) <- handleNoiseResult $ writeMessage "second" rns1
+  print (convert msg2 :: ByteString)
+  (msg, ins2) <- handleNoiseResult $ readMessage msg2 ins1
 
-  -- Responder
-  let readResult = readMessage ct rns
-  case readResult of
-    NoiseResultMessage plaintext _ ->
-      Text.putStrLn (Text.decodeUtf8 (convert plaintext :: ByteString))
-    NoiseResultNeedPSK _ -> error "something terrible happened"
-    NoiseResultException _ -> error "something terrible happened"
-
-  print (1 :: Int)
+  -- Alice encrypts
+  (ciphertext, ins3) <- handleNoiseResult $ writeMessage "Hello Bob!" ins2
+  print (convert ciphertext :: ByteString)
+  (plaintext, rns3) <- handleNoiseResult $ readMessage ciphertext rns2
+  print (convert plaintext :: ByteString)
