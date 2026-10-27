@@ -59,13 +59,17 @@ someFunc = do
   print (convert msg1 :: ByteString)
   (msg, rns1) <- handleNoiseResult $ readMessage msg1 rns
 
+  print $ handshakeComplete rns1
   -- 2. Bob -> Alice
   (msg2, rns2) <- handleNoiseResult $ writeMessage "second" rns1
   print (convert msg2 :: ByteString)
   (msg, ins2) <- handleNoiseResult $ readMessage msg2 ins1
 
+  print $ handshakeComplete rns2
   -- Alice encrypts
   (ciphertext, ins3) <- handleNoiseResult $ writeMessage "Hello Bob!" ins2
   print (convert ciphertext :: ByteString)
   (plaintext, rns3) <- handleNoiseResult $ readMessage ciphertext rns2
   print (convert plaintext :: ByteString)
+
+  print $ handshakeComplete rns3

@@ -26,7 +26,11 @@ source-repository head
 library
   exposed-modules:
       Client
+      Config
+      Errors
+      Handshake
       Lib
+      Server
   other-modules:
       Paths_ppn
   autogen-modules:
