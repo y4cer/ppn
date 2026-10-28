@@ -25,13 +25,15 @@ newtype Session
 
 startClientHandshake ::
   PeerConfig ->
-  IO (Either PpnError (ByteString, ClientHandshake))
+  KeyPair Curve25519 ->
+  Either PpnError (ByteString, ClientHandshake)
 startClientHandshake = undefined
 
 respondServerHandshake ::
   PeerConfig ->
+  KeyPair Curve25519 ->
   ByteString ->
-  IO (Either PpnError (ByteString, PendingServerSession))
+  Either PpnError (ByteString, PendingServerSession)
 respondServerHandshake = undefined
 
 finishClientHandshake ::
