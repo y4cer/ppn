@@ -32,12 +32,12 @@ demoClient client server = do
 
         clientSession <- finishClientHandshake clientHandshake reply
 
-        session <- confirmClient pendingServerSession reply
+        serverSession <- acceptFirstClientMessage pendingServerSession reply
 
-        pure a
+        pure (clientSession)
 
   case res of
-    Left err -> print 1
-    Right (msg, clientHandshake) -> print 2
+    Left _err -> print 1
+    Right _clientHandshake -> print 2
 
   print 1
