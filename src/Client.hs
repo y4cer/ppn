@@ -23,9 +23,17 @@ demoClient ::
   IO ()
 demoClient client server = do
   clientEphemeral <- genEphemeralKey
+  serverEphemeral <- genEphemeralKey
 
   let res = do
-        a <- startClientHandshake client clientEphemeral
+        (msg, clientHandshake) <- startClientHandshake client clientEphemeral
+
+        (reply, pendingServerSession) <- respondServerHandshake server serverEphemeral msg
+
+        clientSession <- finishClientHandshake clientHandshake reply
+
+        session <- confirmClient pendingServerSession reply
+
         pure a
 
   case res of
