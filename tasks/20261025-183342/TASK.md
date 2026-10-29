@@ -1,7 +1,14 @@
 # Create config file for client and server and read this config
 
-- STATUS: OPEN
+- STATUS: IN_PROGRESS
 - PRIORITY: 100
 - TAGS:
 
-No description.
+Use toml file format and toml-parser haskell library
+
+I need to parse the Main function arguments and create 2 modes
+
+```shell
+ppn keygen -o file.key
+ppn run -m initiator/responder -i file.conf
+```

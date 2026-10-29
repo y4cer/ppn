@@ -1,6 +1,6 @@
 # Complete handshake stubs
 
-- STATUS: IN_PROGRESS
+- STATUS: DONE
 - PRIORITY: 100
 - TAGS:
 

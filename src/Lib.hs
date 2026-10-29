@@ -14,11 +14,9 @@ import Errors
 
 someFunc :: IO ()
 someFunc = do
-  -- Static keys: долгосрочные ключи узлов
   aliceStatic <- dhGenKey :: IO (KeyPair Curve25519)
   bobStatic <- dhGenKey :: IO (KeyPair Curve25519)
 
-  -- Ephemeral keys: новые для каждого handshake
   aliceEphemeral <- dhGenKey :: IO (KeyPair Curve25519)
   bobEphemeral <- dhGenKey :: IO (KeyPair Curve25519)
 

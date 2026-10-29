@@ -22,6 +22,8 @@ description:         Please see the README on GitHub at <https://github.com/y4ce
 dependencies:
 - base >= 4.7 && < 5
 - cacophony >= 0.11.0
+- optparse-applicative
+- toml-parser
 
 default-extensions:
 - OverloadedStrings
