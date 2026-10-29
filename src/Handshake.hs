@@ -82,22 +82,34 @@ finishClientHandshake ::
   ClientHandshake ->
   ByteString ->
   Either PpnError Session
-finishClientHandshake = undefined
+finishClientHandshake handshake msg = do
+  (_, ins) <- handleNoiseResult $ writeMessage (convert msg) (clientNoiseState handshake)
 
-acceptFirstClientMessage ::
+  pure (Session ins)
+
+finishServerHandshake ::
   PendingServerSession ->
   ByteString ->
   Either PpnError Session
-acceptFirstClientMessage = undefined
+finishServerHandshake (PendingServerSession handshake) msg = do
+  (_, rns) <- handleNoiseResult $ readMessage (convert msg) handshake
+
+  pure (Session rns)
 
 encryptMessage ::
   Session ->
   ByteString ->
   Either PpnError (ByteString, Session)
-encryptMessage = undefined
+encryptMessage (Session s) pt = do
+  (ct, newState) <- handleNoiseResult $ writeMessage (convert pt) s
+
+  pure (convert ct, Session newState)
 
 decryptMessage ::
   Session ->
   ByteString ->
   Either PpnError (ByteString, Session)
-decryptMessage = undefined
+decryptMessage (Session s) ct = do
+  (pt, newState) <- handleNoiseResult $ writeMessage (convert ct) s
+
+  pure (convert pt, Session newState)
