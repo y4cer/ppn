@@ -74,6 +74,9 @@ respondServerHandshake serverConfig serverEphemeral ct =
             . setLocalEphemeral (Just serverEphemeral)
             $ dho
     let rns = noiseState serverHO noiseKX :: NoiseState AESGCM Curve25519 SHA256
+    (msg2, rns1) <- handleNoiseResult $ readMessage (convert ct) rns
+
+    pure (convert msg2, PendingServerSession rns1)
 
 finishClientHandshake ::
   ClientHandshake ->
