@@ -74,18 +74,33 @@ respondServerHandshake serverConfig serverEphemeral ct =
             . setLocalEphemeral (Just serverEphemeral)
             $ dho
     let rns = noiseState serverHO noiseKX :: NoiseState AESGCM Curve25519 SHA256
-    (msg2, rns1) <- handleNoiseResult $ readMessage (convert ct) rns
+    (_, rns1) <- handleNoiseResult $ readMessage (convert ct) rns
 
-    pure (convert msg2, PendingServerSession rns1)
+    (reply, newRns) <- handleNoiseResult $ writeMessage "" rns1
+
+    pure (convert reply, PendingServerSession newRns)
 
 finishClientHandshake ::
   ClientHandshake ->
   ByteString ->
   Either PpnError Session
 finishClientHandshake handshake msg = do
-  (_, ins) <- handleNoiseResult $ writeMessage (convert msg) (clientNoiseState handshake)
+  (_, ins) <-
+    handleNoiseResult $
+      readMessage (convert msg) (clientNoiseState handshake)
 
-  pure (Session ins)
+  validateSession ins
+  where
+    validateSession ins
+      | not (handshakeComplete ins) =
+          Left HandshakeNotComplete
+      | Nothing <- remoteStaticKey ins =
+          Left ServerKeyMissing
+      | Just actualKey <- remoteStaticKey ins,
+        actualKey /= expectedServerKey handshake =
+          Left ServerKeyMismatch
+      | otherwise =
+          Right (Session ins)
 
 finishServerHandshake ::
   PendingServerSession ->
@@ -110,6 +125,6 @@ decryptMessage ::
   ByteString ->
   Either PpnError (ByteString, Session)
 decryptMessage (Session s) ct = do
-  (pt, newState) <- handleNoiseResult $ writeMessage (convert ct) s
+  (pt, newState) <- handleNoiseResult $ readMessage (convert ct) s
 
   pure (convert pt, Session newState)
