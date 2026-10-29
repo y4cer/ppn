@@ -1,13 +1,13 @@
 module Client where
 
 import Config
+import Crypto.Noise (ScrubbedBytes)
 import Crypto.Noise.DH (PublicKey)
 import Crypto.Noise.DH.Curve25519 (Curve25519)
-import Data.ByteString (ByteString)
 import Errors
 import Handshake
 
-clientConfig :: PublicKey Curve25519 -> ByteString -> IO PeerConfig
+clientConfig :: PublicKey Curve25519 -> ScrubbedBytes -> IO PeerConfig
 clientConfig serverPublicKey protocolPrologue = do
   staticKey <- genStaticKey
   pure
