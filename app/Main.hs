@@ -5,15 +5,15 @@ import Options
 import Options.Applicative
 
 main :: IO ()
-main = greet =<< execParser opts
+main = cmd =<< execParser opts
   where
     opts =
       info
-        (sample <**> helper)
-        ( progDesc "Print a greeting for TARGET"
-            <> header "hello - a test for optparse-applicative"
+        (commandParser <**> helper)
+        ( progDesc "Generate keypair or run a ppn in client or server mode"
+            <> header "ppn - a secure client-server communication based on Noise KX protocol"
         )
 
-greet :: Sample -> IO ()
-greet (Sample h False n) = putStrLn $ "Hello, " ++ h ++ replicate n '!'
-greet _ = return ()
+cmd :: Command -> IO ()
+cmd (Keygen filePath) = undefined
+cmd (Run mode filepath) = undefined

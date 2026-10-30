@@ -19,37 +19,52 @@ data Command
   deriving (Show)
 
 commandParser :: Parser Command
-commandParser = undefined
+commandParser =
+  hsubparser
+    ( command
+        "keygen"
+        ( info
+            (keygenParser <**> helper)
+            (progDesc "Generate a staic key")
+        )
+        <> command
+          "run"
+          ( info
+              (runParser)
+              (progDesc "Run a peer")
+          )
+    )
 
 keygenParser :: Parser Command
-keygenParser = undefined
+keygenParser =
+  Keygen
+    <$> strOption
+      ( short 'o'
+          <> long "output"
+          <> metavar "OUTPUT"
+          <> help "output key file"
+      )
 
 runParser :: Parser Command
-runParser = undefined
+runParser =
+  Run
+    <$> option
+      modeReader
+      ( short 'm'
+          <> long "mode"
+          <> metavar "MODE"
+          <> help "initiator or responder"
+      )
+    <*> strOption
+      ( short 'i'
+          <> long "input"
+          <> metavar "FILE"
+          <> help "input configuration file"
+      )
 
 modeReader :: ReadM Mode
 modeReader = eitherReader $ \input ->
   case input of
-    "init" -> Right Initiator
-
-sample :: Parser Sample
-sample =
-  Sample
-    <$> strOption
-      ( long "hello"
-          <> metavar "TARGET"
-          <> help "Target for the greeting"
-      )
-    <*> switch
-      ( long "quiet"
-          <> short 'q'
-          <> help "Whether to be quiet"
-      )
-    <*> option
-      auto
-      ( long "enthusiasm"
-          <> help "How enthusiastically to greet"
-          <> showDefault
-          <> value 1
-          <> metavar "INT"
-      )
+    "initiator" -> Right Initiator
+    "responder" -> Right Responder
+    _ -> Left "Expected initiator or responder"
