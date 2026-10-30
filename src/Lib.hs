@@ -3,14 +3,14 @@ module Lib
   )
 where
 
-import Client
+import           Client
 -- Used to generate and manipulate keys
 
-import Config
-import Crypto.Noise
-import Crypto.Noise.DH
-import Crypto.Noise.DH.Curve25519
-import Errors
+import           Config
+import           Crypto.Noise
+import           Crypto.Noise.DH
+import           Crypto.Noise.DH.Curve25519
+import           Errors
 
 someFunc :: IO ()
 someFunc = do

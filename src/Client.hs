@@ -1,11 +1,11 @@
 module Client where
 
-import Config
-import Crypto.Noise (ScrubbedBytes)
-import Crypto.Noise.DH (PublicKey)
-import Crypto.Noise.DH.Curve25519 (Curve25519)
-import Errors
-import Handshake
+import           Config
+import           Crypto.Noise               (ScrubbedBytes)
+import           Crypto.Noise.DH            (PublicKey)
+import           Crypto.Noise.DH.Curve25519 (Curve25519)
+import           Errors
+import           Handshake
 
 clientConfig :: PublicKey Curve25519 -> ScrubbedBytes -> IO PeerConfig
 clientConfig serverPublicKey protocolPrologue = do
@@ -41,7 +41,7 @@ demoClient client server = do
         pure (newClientSession, serverSession)
 
   case res of
-    Left _err -> print _err
+    Left _err              -> print _err
     Right _clientHandshake -> print 2
 
   print 1

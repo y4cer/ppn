@@ -4,9 +4,9 @@
 - PRIORITY: 100
 - TAGS:
 
-Use toml file format and toml-parser haskell library
+[ ] - Use toml file format and toml-parser haskell library
 
-I need to parse the Main function arguments and create 2 modes
+[x] - I need to parse the Main function arguments and create 2 modes
 
 ```shell
 ppn keygen -o file.key

@@ -1,0 +1,3 @@
+private-key-file = "./keys/client.key"
+peer-public-key = "BASE64_PUBLIC_KEY_OF_SERVER"
+prologue = "ppn/v1"

@@ -1,8 +1,8 @@
 module Main (main) where
 
-import Lib
-import Options
-import Options.Applicative
+import           Lib
+import           Options
+import           Options.Applicative
 
 main :: IO ()
 main = cmd =<< execParser opts
@@ -15,5 +15,5 @@ main = cmd =<< execParser opts
         )
 
 cmd :: Command -> IO ()
-cmd (Keygen filePath) = undefined
+cmd (Keygen filePath)   = undefined
 cmd (Run mode filepath) = undefined

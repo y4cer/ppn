@@ -1,6 +1,6 @@
 module Errors where
 
-import Control.Exception (SomeException)
+import           Control.Exception (SomeException)
 
 data PpnError
   = NoiseFailure SomeException

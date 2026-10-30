@@ -1,20 +1,20 @@
 module Handshake where
 
-import Config
-import Crypto.Noise
-import Crypto.Noise.Cipher.AESGCM
-import Crypto.Noise.DH (KeyPair, PublicKey)
-import Crypto.Noise.DH.Curve25519
-import Crypto.Noise.HandshakePatterns (noiseKX)
-import Crypto.Noise.Hash.SHA256
-import Data.ByteString (ByteString)
-import Errors
+import           Config
+import           Crypto.Noise
+import           Crypto.Noise.Cipher.AESGCM
+import           Crypto.Noise.DH                (KeyPair, PublicKey)
+import           Crypto.Noise.DH.Curve25519
+import           Crypto.Noise.HandshakePatterns (noiseKX)
+import           Crypto.Noise.Hash.SHA256
+import           Data.ByteString                (ByteString)
+import           Errors
 
 type PpnNoiseState =
   NoiseState AESGCM Curve25519 SHA256
 
 data ClientHandshake = ClientHandshake
-  { clientNoiseState :: PpnNoiseState,
+  { clientNoiseState  :: PpnNoiseState,
     expectedServerKey :: PublicKey Curve25519
   }
 
@@ -30,8 +30,8 @@ handleNoiseResult ::
 handleNoiseResult result =
   case result of
     NoiseResultMessage bytes nextState -> pure (bytes, nextState)
-    NoiseResultNeedPSK _ -> Left UnexpectedPSK
-    NoiseResultException exception -> Left (NoiseFailure exception)
+    NoiseResultNeedPSK _               -> Left UnexpectedPSK
+    NoiseResultException exception     -> Left (NoiseFailure exception)
 
 startClientHandshake ::
   PeerConfig ->

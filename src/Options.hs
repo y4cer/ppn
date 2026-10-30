@@ -1,10 +1,10 @@
 module Options where
 
-import Options.Applicative
+import           Options.Applicative
 
 data Sample = Sample
-  { hello :: String,
-    quiet :: Bool,
+  { hello      :: String,
+    quiet      :: Bool,
     enthusiasm :: Int
   }
 
@@ -67,4 +67,4 @@ modeReader = eitherReader $ \input ->
   case input of
     "initiator" -> Right Initiator
     "responder" -> Right Responder
-    _ -> Left "Expected initiator or responder"
+    _           -> Left "Expected initiator or responder"
