@@ -1,4 +1,4 @@
-module Config where
+module Config.Peer where
 
 import           Crypto.Noise.Cipher        (Plaintext)
 import           Crypto.Noise.DH            (KeyPair, PublicKey, dhGenKey)

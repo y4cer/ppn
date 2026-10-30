@@ -6,7 +6,7 @@ where
 import           Client
 -- Used to generate and manipulate keys
 
-import           Config
+import           Config.Peer
 import           Crypto.Noise
 import           Crypto.Noise.DH
 import           Crypto.Noise.DH.Curve25519
@@ -33,4 +33,4 @@ someFunc = do
             prologue = "S"
           }
 
-  demoClient clientConfig serverConfig
+  runClient clientConfig serverConfig

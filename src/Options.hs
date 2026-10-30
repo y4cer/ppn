@@ -2,12 +2,6 @@ module Options where
 
 import           Options.Applicative
 
-data Sample = Sample
-  { hello      :: String,
-    quiet      :: Bool,
-    enthusiasm :: Int
-  }
-
 data Mode
   = Initiator
   | Responder

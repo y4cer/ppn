@@ -26,7 +26,8 @@ source-repository head
 library
   exposed-modules:
       Client
-      Config
+      Config.File
+      Config.Peer
       Errors
       Handshake
       Lib

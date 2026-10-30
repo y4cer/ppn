@@ -1,6 +1,6 @@
 module Handshake where
 
-import           Config
+import           Config.Peer
 import           Crypto.Noise
 import           Crypto.Noise.Cipher.AESGCM
 import           Crypto.Noise.DH                (KeyPair, PublicKey)

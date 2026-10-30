@@ -1,6 +1,6 @@
 module Client where
 
-import           Config
+import           Config.Peer
 import           Crypto.Noise               (ScrubbedBytes)
 import           Crypto.Noise.DH            (PublicKey)
 import           Crypto.Noise.DH.Curve25519 (Curve25519)
@@ -17,11 +17,11 @@ clientConfig serverPublicKey protocolPrologue = do
         prologue = protocolPrologue
       }
 
-demoClient ::
+runClient ::
   PeerConfig ->
   PeerConfig ->
   IO ()
-demoClient client server = do
+runClient client server = do
   clientEphemeral <- genEphemeralKey
   serverEphemeral <- genEphemeralKey
 
