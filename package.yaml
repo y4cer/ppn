@@ -24,6 +24,7 @@ dependencies:
 - cacophony >= 0.11.0
 - optparse-applicative
 - toml-parser
+- filepath
 
 default-extensions:
 - OverloadedStrings

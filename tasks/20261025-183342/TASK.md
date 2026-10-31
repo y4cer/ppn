@@ -6,6 +6,8 @@
 
 [ ] - Use toml file format and toml-parser haskell library
 
+
+
 [x] - I need to parse the Main function arguments and create 2 modes
 
 ```shell

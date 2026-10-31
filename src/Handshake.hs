@@ -3,11 +3,11 @@ module Handshake where
 import           Config.Peer
 import           Crypto.Noise
 import           Crypto.Noise.Cipher.AESGCM
-import           Crypto.Noise.DH                (KeyPair, PublicKey)
+import           Crypto.Noise.DH
 import           Crypto.Noise.DH.Curve25519
-import           Crypto.Noise.HandshakePatterns (noiseKX)
+import           Crypto.Noise.HandshakePatterns
 import           Crypto.Noise.Hash.SHA256
-import           Data.ByteString                (ByteString)
+import           Data.ByteString
 import           Errors
 
 type PpnNoiseState =

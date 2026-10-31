@@ -1,10 +1,9 @@
 module Client where
 
 import           Config.Peer
-import           Crypto.Noise               (ScrubbedBytes)
-import           Crypto.Noise.DH            (PublicKey)
-import           Crypto.Noise.DH.Curve25519 (Curve25519)
-import           Errors
+import           Crypto.Noise
+import           Crypto.Noise.DH
+import           Crypto.Noise.DH.Curve25519
 import           Handshake
 
 clientConfig :: PublicKey Curve25519 -> ScrubbedBytes -> IO PeerConfig

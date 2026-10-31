@@ -46,6 +46,7 @@ library
       base >=4.7 && <5
     , bytestring
     , cacophony >=0.11.0
+    , filepath
     , memory
     , optparse-applicative
     , text
@@ -66,6 +67,7 @@ executable ppn-exe
   build-depends:
       base >=4.7 && <5
     , cacophony >=0.11.0
+    , filepath
     , optparse-applicative
     , ppn
     , toml-parser
@@ -86,6 +88,7 @@ test-suite ppn-test
   build-depends:
       base >=4.7 && <5
     , cacophony >=0.11.0
+    , filepath
     , optparse-applicative
     , ppn
     , toml-parser

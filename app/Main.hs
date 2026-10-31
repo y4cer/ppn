@@ -2,7 +2,6 @@ module Main (main) where
 
 import           Client
 import           Config.File
-import           Lib
 import           Options
 import           Options.Applicative
 import           Server

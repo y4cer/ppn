@@ -1,7 +1,7 @@
 module Config.Peer where
 
-import           Crypto.Noise.Cipher        (Plaintext)
-import           Crypto.Noise.DH            (KeyPair, PublicKey, dhGenKey)
+import           Crypto.Noise.Cipher
+import           Crypto.Noise.DH
 import           Crypto.Noise.DH.Curve25519
 
 data PeerConfig = PeerConfig
