@@ -1,7 +1,7 @@
 # Generate static keys to file
 
-- STATUS: OPEN
+- STATUS: CLOSED
 - PRIORITY: 100
 - TAGS:
 
-No description.
+Need to add `ppn keygen -o file.key` that will generate the local static key to file

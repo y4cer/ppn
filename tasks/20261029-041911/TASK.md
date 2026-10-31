@@ -1,6 +1,6 @@
 # Complete handshake stubs
 
-- STATUS: DONE
+- STATUS: CLOSED
 - PRIORITY: 100
 - TAGS:
 
