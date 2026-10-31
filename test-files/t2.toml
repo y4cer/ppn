@@ -1,0 +1,3 @@
+private-key-file = "./t2.key"
+peer-public-key = "N3W4KLomhxmRX/JUhrJNUqooCrQiwXcjPuxaNbhzL1k="
+prologue = "ppn/v1"

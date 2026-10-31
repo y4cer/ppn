@@ -17,8 +17,8 @@ clientConfig serverPublicKey protocolPrologue = do
       }
 
 runClient ::
-  PeerConfig ->
-  PeerConfig ->
+  PeerConfig -> -- client config
+  PeerConfig -> -- server config
   IO ()
 runClient client server = do
   clientEphemeral <- genEphemeralKey
