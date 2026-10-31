@@ -106,10 +106,14 @@ finishServerHandshake ::
   PendingServerSession ->
   ByteString ->
   Either PpnError Session
-finishServerHandshake (PendingServerSession handshake) msg = do
-  (_, rns) <- handleNoiseResult $ readMessage (convert msg) handshake
+finishServerHandshake (PendingServerSession handshake) msg' = do
+  (msg, rns) <- handleNoiseResult $ readMessage (convert msg') handshake
 
-  pure (Session rns)
+  validateMsg msg rns
+    where
+      validateMsg message state
+        | message == "ready" = Right (Session state)
+        | otherwise = Left HandshakeNotComplete
 
 encryptMessage ::
   Session ->

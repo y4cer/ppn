@@ -30,9 +30,9 @@ library
       Config.Peer
       Errors
       Handshake
-      Lib
       Options
       Server
+      Transport.Class
   other-modules:
       Paths_ppn
   autogen-modules:
