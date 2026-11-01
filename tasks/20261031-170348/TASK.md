@@ -1,6 +1,6 @@
 # Implement Transport for communication
 
-- STATUS: OPEN
+- STATUS: CLOSED
 - PRIORITY: 100
 - TAGS:
 

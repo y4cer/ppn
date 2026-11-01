@@ -1,6 +1,6 @@
 # Implement client with the Transport
 
-- STATUS: IN_WORK
+- STATUS: CLOSED
 - PRIORITY: 100
 - TAGS:
 
