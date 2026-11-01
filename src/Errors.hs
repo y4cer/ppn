@@ -5,6 +5,7 @@ import           Control.Exception
 data PpnError
   = NoiseFailure SomeException
   | UnexpectedPSK
+  | InvalidConfirmation
   | HandshakeNotComplete
   | ServerKeyMissing
   | ServerKeyMismatch

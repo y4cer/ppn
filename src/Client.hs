@@ -4,6 +4,9 @@ import           Config.Peer
 import           Handshake
 import           Transport.Class
 
+orFail :: Show e => Either e a -> IO a
+orFail = either (fail . show) pure
+
 runClient ::
   Transport t =>
   PeerConfig -> -- client config
@@ -12,8 +15,7 @@ runClient ::
 runClient client transport = do
   clientEphemeral <- genEphemeralKey
 
-  (msg, clientHandshake) <-
-    either (fail . show) pure $
+  (msg, clientHandshake) <- orFail $
       startClientHandshake client clientEphemeral
 
   sendPacket transport msg
@@ -22,12 +24,10 @@ runClient client transport = do
     recvPacket transport
       >>= maybe (fail "Peer closed connection during handshake") pure
 
-  session <-
-    either (fail . show) pure $
+  session <- orFail $
       finishClientHandshake clientHandshake reply
 
-  (confirmation, nextSession) <-
-    either (fail . show) pure $
+  (confirmation, nextSession) <- orFail $
       encryptMessage session "ready"
 
   sendPacket transport confirmation
@@ -39,12 +39,10 @@ runClient client transport = do
         recvPacket transport
           >>= maybe (fail "Peer closed connection during handshake") pure
 
-      (pt, session') <-
-        either (fail . show) pure $
+      (pt, session') <- orFail $
           decryptMessage session reply
 
-      (ct, newSession) <-
-        either (fail . show) pure $
+      (ct, newSession) <- orFail $
           encryptMessage session' pt
 
       sendPacket transport ct

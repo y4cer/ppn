@@ -43,14 +43,9 @@ instance ToTable FileConfig where
 decodeConfig :: Text.Text -> Either [String] FileConfig
 decodeConfig input =
   case Toml.decode input of
-    Toml.Failure errors ->
-      Left errors
-
-    Toml.Success [] config ->
-      Right config
-
-    Toml.Success warnings _ ->
-      Left warnings
+    Toml.Failure errors     -> Left errors
+    Toml.Success [] config  -> Right config
+    Toml.Success warnings _ -> Left warnings
 
 encodeConfig :: FileConfig -> Text.Text
 encodeConfig =

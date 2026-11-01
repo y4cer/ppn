@@ -1,6 +1,7 @@
 module Handshake where
 
 import           Config.Peer
+import           Control.Monad
 import           Crypto.Noise
 import           Crypto.Noise.Cipher.AESGCM
 import           Crypto.Noise.DH
@@ -85,35 +86,38 @@ finishClientHandshake ::
   ByteString ->
   Either PpnError Session
 finishClientHandshake handshake msg = do
-  (_, ins) <-
+  (_, state) <-
     handleNoiseResult $
       readMessage (convert msg) (clientNoiseState handshake)
 
-  validateSession ins
-  where
-    validateSession ins
-      | not (handshakeComplete ins) =
-          Left HandshakeNotComplete
-      | Nothing <- remoteStaticKey ins =
-          Left ServerKeyMissing
-      | Just actualKey <- remoteStaticKey ins,
-        actualKey /= expectedServerKey handshake =
-          Left ServerKeyMismatch
-      | otherwise =
-          Right (Session ins)
+  unless (handshakeComplete state) $
+    Left HandshakeNotComplete
+
+  serverKey <- maybe
+    (Left ServerKeyMissing)
+    Right (remoteStaticKey state)
+
+  unless (serverKey == expectedServerKey handshake) $
+    Left ServerKeyMismatch
+
+  pure (Session state)
+
 
 finishServerHandshake ::
   PendingServerSession ->
   ByteString ->
   Either PpnError Session
 finishServerHandshake (PendingServerSession handshake) msg' = do
-  (msg, rns) <- handleNoiseResult $ readMessage (convert msg') handshake
+  (msg, state) <- handleNoiseResult $ readMessage (convert msg') handshake
 
-  validateMsg msg rns
-    where
-      validateMsg message state
-        | message == "ready" = Right (Session state)
-        | otherwise = Left HandshakeNotComplete
+  unless (msg == "ready") $
+    Left InvalidConfirmation
+
+  unless (handshakeComplete state) $
+    Left HandshakeNotComplete
+
+  pure (Session state)
+
 
 encryptMessage ::
   Session ->
@@ -123,6 +127,7 @@ encryptMessage (Session s) pt = do
   (ct, newState) <- handleNoiseResult $ writeMessage (convert pt) s
 
   pure (convert ct, Session newState)
+
 
 decryptMessage ::
   Session ->

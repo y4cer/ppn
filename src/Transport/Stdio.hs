@@ -18,10 +18,8 @@ instance Transport StdioTransport where
 
     where
       size = BS.length msg
-      header = BS.pack
-        [ fromIntegral (size `div` 0x100)
-        , fromIntegral (size `mod` 0x100)
-        ]
+      header = BS.pack $ Prelude.map fromIntegral [hi, lo]
+      (hi, lo) = divMod size 256
 
   recvPacket :: StdioTransport -> IO (Maybe ByteString)
   recvPacket (Stdio input _) = do
@@ -30,15 +28,13 @@ instance Transport StdioTransport where
     case BS.unpack header of
       [] -> pure Nothing
       [hi, lo] -> do
+        let size = fromIntegral hi * 0x100 + fromIntegral lo
         msg <- BS.hGet input size
 
         when (BS.length msg /= size) $
           fail $ "Unexpected message length. Expected: " <> (show size)
                <> " got: " <> (show $ BS.length msg)
         pure (Just msg)
-
-        where
-          size = fromIntegral hi * 0x100 + fromIntegral lo
       _ -> fail "Connection closed"
 
 
