@@ -33,6 +33,7 @@ library
       Options
       Server
       Transport.Class
+      Transport.Stdio
   other-modules:
       Paths_ppn
   autogen-modules:
