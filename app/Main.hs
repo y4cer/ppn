@@ -20,10 +20,9 @@ main = cmd =<< execParser opts
 cmd :: Command -> IO ()
 cmd (Keygen filePath)   = genKeysToFile filePath
 cmd (Run mode filepath) = do
-  clientConfig <- loadConfig "test-files/t1.toml"
-  serverConfig <- loadConfig "test-files/t2.toml"
+  config <- loadConfig filepath
   transport <- stdioTransport
 
   case mode of
-    Initiator -> runClient clientConfig transport
-    Responder -> runServer clientConfig clientConfig
+    Initiator -> runClient config transport
+    Responder -> runServer config transport

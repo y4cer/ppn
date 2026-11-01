@@ -1,9 +1,6 @@
 module Client where
 
 import           Config.Peer
-import           Crypto.Noise
-import           Crypto.Noise.DH
-import           Crypto.Noise.DH.Curve25519
 import           Handshake
 import           Transport.Class
 
