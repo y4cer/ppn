@@ -24,7 +24,7 @@ instance Transport StdioTransport where
 
   recvPacket :: StdioTransport -> IO (Maybe ByteString)
   recvPacket (Stdio input _) = do
-    header <- BS.hGet input 2
+    header <- BS.hGet input 2 -- size header is 2 bytes
 
     case BS.unpack header of
       [] -> pure Nothing
