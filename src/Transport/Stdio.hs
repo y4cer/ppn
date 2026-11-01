@@ -14,12 +14,13 @@ instance Transport StdioTransport where
       fail "Message is too large"
 
     BS.hPut output (header <> msg)
+    hFlush output
 
     where
       size = BS.length msg
       header = BS.pack
-        [ fromIntegral (size `div` 0xff)
-        , fromIntegral (size `mod` 0xff)
+        [ fromIntegral (size `div` 0x100)
+        , fromIntegral (size `mod` 0x100)
         ]
 
   recvPacket :: StdioTransport -> IO (Maybe ByteString)
@@ -37,7 +38,7 @@ instance Transport StdioTransport where
         pure (Just msg)
 
         where
-          size = fromIntegral hi * 0xff + fromIntegral lo
+          size = fromIntegral hi * 0x100 + fromIntegral lo
       _ -> fail "Connection closed"
 
 
