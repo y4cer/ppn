@@ -11,4 +11,4 @@ I need to write
 `ppn gen-sample-config -o`
 
 
-which will write the 
+which will write the sample config to the output file
