@@ -1,6 +1,6 @@
 # Add tests for client and server and cryptographic functions
 
-- STATUS: OPEN
+- STATUS: CLOSED
 - PRIORITY: 100
 - TAGS:
 

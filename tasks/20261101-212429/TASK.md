@@ -1,6 +1,6 @@
 # Add sample config generation
 
-- STATUS: OPEN
+- STATUS: IN_PROGRESS
 - PRIORITY: 100
 - TAGS:
 

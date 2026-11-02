@@ -68,3 +68,8 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - ppn
+    - hspec
+    - QuickCheck
+    - bytestring
+    - text
+    - temporary

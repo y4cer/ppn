@@ -19,6 +19,18 @@ Proposed modules:
 - Handshake - wrappers for Noise library calls, handshake and session establishment
 - Config    - configuration, i.e. the static and remote keys
 
+## Tests
+
+Hspec runs three QuickCheck properties (session, framing, TOML) and one regression
+test for truncated authentication tags. Tests generate their own keys and need no
+`noise-repl` or `test-files/` fixtures.
+
+```sh
+stack test
+# Replay generated inputs from a reported seed:
+stack test --test-arguments='--seed=12345 +RTS -N2 -RTS'
+```
+
 ---
 
 References:
