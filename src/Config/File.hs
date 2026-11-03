@@ -61,6 +61,14 @@ genKeysToFile filePath = do
   BS.writeFile filePath (privateText <> "\n")
   BS8.putStrLn publicText
 
+genSampleConfig :: FilePath -> IO ()
+genSampleConfig filePath = do
+  let sampleConfig = FileConfig
+                    { configPrivateKeyFile = takeFileName (filePath <> ".key"), configPeerPublicKey = "BASE64_PUBLIC_KEY", configPrologue = "ppn/v1" }
+      encoded = encodeConfig sampleConfig
+
+  BS.writeFile filePath (TextEncoding.encodeUtf8 encoded)
+
 buildPeerConfig :: FileConfig -> BS.ByteString -> Either String PeerConfig
 buildPeerConfig config keyBytes = do
   privateBytes <-

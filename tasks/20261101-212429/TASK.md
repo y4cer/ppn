@@ -8,7 +8,7 @@ This is pretty self-explanatory, but
 
 I need to write
 
-`ppn gen-sample-config -o`
+`ppn gen-sample-config -o output`
 
 
 which will write the sample config to the output file

@@ -9,24 +9,28 @@ data Mode
 
 data Command
   = Keygen FilePath
+  | ConfigGen FilePath
   | Run Mode FilePath
   deriving (Show)
 
 commandParser :: Parser Command
 commandParser =
   hsubparser
-    ( command
-        "keygen"
-        ( info
-            (keygenParser <**> helper)
-            (progDesc "Generate a staic key")
-        )
-        <> command
-          "run"
-          ( info
-              (runParser)
-              (progDesc "Run a peer")
-          )
+    ( command "keygen"
+      ( info
+          (keygenParser <**> helper)
+          (progDesc "Generate a staic key")
+      )
+    <> command "run"
+      ( info
+          (runParser <**> helper)
+          (progDesc "Run a peer")
+      )
+    <> command "gencfg"
+      ( info
+          (configGenParser <**> helper)
+          (progDesc "Generate sample config and a static key")
+      )
     )
 
 keygenParser :: Parser Command
@@ -37,6 +41,16 @@ keygenParser =
           <> long "output"
           <> metavar "OUTPUT"
           <> help "output key file"
+      )
+
+configGenParser :: Parser Command
+configGenParser =
+  ConfigGen
+    <$> strOption
+      ( short 'o'
+          <> long "output"
+          <> metavar "OUTPUT"
+          <> help "output config file"
       )
 
 runParser :: Parser Command
