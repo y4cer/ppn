@@ -63,11 +63,12 @@ testSendRecv bytes = withTestTransport $ \handle transport -> do
 
 testEncodeDecode :: String -> String -> String -> Expectation
 testEncodeDecode keyPath publicKey protocol = do
-  let config = FileConfig
-        { configPrivateKeyFile = keyPath
-        , configPeerPublicKey = Text.pack publicKey
-        , configPrologue = Text.pack protocol
-        }
+  let config =
+        FileConfig
+          { configPrivateKeyFile = keyPath,
+            configPeerPublicKey = Text.pack publicKey,
+            configPrologue = Text.pack protocol
+          }
   decodeConfig (encodeConfig config) `shouldBe` Right config
 
 genFrame :: Gen [Word8]
@@ -101,5 +102,5 @@ establishTestSession = do
 
   pure (nextClient, server)
 
-mustRight :: Show e => Either e a -> IO a
+mustRight :: (Show e) => Either e a -> IO a
 mustRight = either (fail . show) pure

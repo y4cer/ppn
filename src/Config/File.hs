@@ -34,8 +34,7 @@ instance ToValue FileConfig where
 instance ToTable FileConfig where
   toTable config =
     table
-      [
-        "private-key-file" .= configPrivateKeyFile config,
+      [ "private-key-file" .= configPrivateKeyFile config,
         "peer-public-key" .= configPeerPublicKey config,
         "prologue" .= configPrologue config
       ]
@@ -63,8 +62,12 @@ genKeysToFile filePath = do
 
 genSampleConfig :: FilePath -> IO ()
 genSampleConfig filePath = do
-  let sampleConfig = FileConfig
-                    { configPrivateKeyFile = takeFileName (filePath <> ".key"), configPeerPublicKey = "BASE64_PUBLIC_KEY", configPrologue = "ppn/v1" }
+  let sampleConfig =
+        FileConfig
+          { configPrivateKeyFile = takeFileName (filePath <> ".key"),
+            configPeerPublicKey = "BASE64_PUBLIC_KEY",
+            configPrologue = "ppn/v1"
+          }
       encoded = encodeConfig sampleConfig
 
   BS.writeFile filePath (TextEncoding.encodeUtf8 encoded)
@@ -96,15 +99,14 @@ buildPeerConfig config keyBytes = do
         prologue = convert (TextEncoding.encodeUtf8 (configPrologue config))
       }
 
-
 loadConfig :: FilePath -> IO PeerConfig
 loadConfig filePath = do
   bytesContent <- BS.readFile filePath
   textContent <- either (fail . show) pure (TextEncoding.decodeUtf8' bytesContent)
   config <- either (fail . show) pure (decodeConfig textContent)
 
-  keyBytes <- BS.readFile $
-    takeDirectory filePath </> configPrivateKeyFile config
+  keyBytes <-
+    BS.readFile $
+      takeDirectory filePath </> configPrivateKeyFile config
 
   either fail pure (buildPeerConfig config keyBytes)
-

@@ -21,7 +21,7 @@ cmd :: Command -> IO ()
 cmd (ConfigGen filePath) = do
   genKeysToFile (filePath <> ".key")
   genSampleConfig filePath
-cmd (Keygen filePath)   = genKeysToFile filePath
+cmd (Keygen filePath) = genKeysToFile filePath
 cmd (Run mode filepath) = do
   config <- loadConfig filepath
   transport <- stdioTransport

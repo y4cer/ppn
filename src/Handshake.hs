@@ -93,15 +93,16 @@ finishClientHandshake handshake msg = do
   unless (handshakeComplete state) $
     Left HandshakeNotComplete
 
-  serverKey <- maybe
-    (Left ServerKeyMissing)
-    Right (remoteStaticKey state)
+  serverKey <-
+    maybe
+      (Left ServerKeyMissing)
+      Right
+      (remoteStaticKey state)
 
   unless (serverKey == expectedServerKey handshake) $
     Left ServerKeyMismatch
 
   pure (Session state)
-
 
 finishServerHandshake ::
   PendingServerSession ->
@@ -118,7 +119,6 @@ finishServerHandshake (PendingServerSession handshake) msg' = do
 
   pure (Session state)
 
-
 encryptMessage ::
   Session ->
   ByteString ->
@@ -127,7 +127,6 @@ encryptMessage (Session s) pt = do
   (ct, newState) <- handleNoiseResult $ writeMessage (convert pt) s
 
   pure (convert ct, Session newState)
-
 
 decryptMessage ::
   Session ->

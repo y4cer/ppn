@@ -5,10 +5,10 @@ import           Handshake
 import           Transport.Class
 
 runServer ::
-  Transport t =>
+  (Transport t) =>
   PeerConfig -> -- client config
-  t
-  -> IO ()
+  t ->
+  IO ()
 runServer server transport = do
   serverEphemeral <- genEphemeralKey
 
@@ -28,7 +28,7 @@ runServer server transport = do
 
   serverSession <-
     either (fail . show) pure $
-    finishServerHandshake pendingServerSession confirmation
+      finishServerHandshake pendingServerSession confirmation
 
   receiveLoop serverSession
   where

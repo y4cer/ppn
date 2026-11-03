@@ -16,21 +16,24 @@ data Command
 commandParser :: Parser Command
 commandParser =
   hsubparser
-    ( command "keygen"
-      ( info
-          (keygenParser <**> helper)
-          (progDesc "Generate a staic key")
-      )
-    <> command "run"
-      ( info
-          (runParser <**> helper)
-          (progDesc "Run a peer")
-      )
-    <> command "gencfg"
-      ( info
-          (configGenParser <**> helper)
-          (progDesc "Generate sample config and a static key")
-      )
+    ( command
+        "keygen"
+        ( info
+            (keygenParser <**> helper)
+            (progDesc "Generate a staic key")
+        )
+        <> command
+          "run"
+          ( info
+              (runParser <**> helper)
+              (progDesc "Run a peer")
+          )
+        <> command
+          "gencfg"
+          ( info
+              (configGenParser <**> helper)
+              (progDesc "Generate sample config and a static key")
+          )
     )
 
 keygenParser :: Parser Command
