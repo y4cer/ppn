@@ -45,6 +45,7 @@ library:
   dependencies:
   - bytestring
   - memory
+  - network
   - text
 
 executables:

@@ -31,9 +31,11 @@ library
       Errors
       Handshake
       Options
+      Playground
       Server
       Transport.Class
       Transport.Stdio
+      Transport.Tcp
   other-modules:
       Paths_ppn
   autogen-modules:
@@ -49,6 +51,7 @@ library
     , cacophony >=0.11.0
     , filepath
     , memory
+    , network
     , optparse-applicative
     , text
     , toml-parser

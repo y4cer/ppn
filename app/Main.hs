@@ -6,6 +6,7 @@ import           Options
 import           Options.Applicative
 import           Server
 import           Transport.Stdio
+import           Transport.Tcp
 
 main :: IO ()
 main = cmd =<< execParser opts
@@ -27,5 +28,5 @@ cmd (Run mode filepath) = do
   transport <- stdioTransport
 
   case mode of
-    Initiator -> runClient config transport
-    Responder -> runServer config transport
+    Initiator -> clien config -- runClient config transport
+    Responder -> serv config -- runServer config transport

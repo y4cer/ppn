@@ -1,7 +1,10 @@
 module Client where
 
 import           Config.Peer
+import           Control.Monad         (unless)
+import qualified Data.ByteString.Char8 as BS
 import           Handshake
+import           System.IO             (isEOF)
 import           Transport.Class
 
 orFail :: (Show e) => Either e a -> IO a
@@ -35,24 +38,30 @@ runClient client transport = do
 
   sendPacket transport confirmation
 
-  receiveLoop nextSession
+  sendLoop nextSession
   where
-    receiveLoop session = do
-      reply <-
-        recvPacket transport
-          >>= maybe (fail "Peer closed connection during handshake") pure
+    sendLoop session = do
+      end <- isEOF
+      unless end $ do
+        message <- BS.getLine
 
-      (pt, session') <-
-        orFail $
-          decryptMessage session reply
+        (ct, sentSession) <-
+          orFail $
+            encryptMessage session message
 
-      (ct, newSession) <-
-        orFail $
-          encryptMessage session' pt
+        sendPacket transport ct
 
-      sendPacket transport ct
+        reply <-
+          recvPacket transport
+            >>= maybe (fail "Peer closed connection while waiting for reply") pure
 
-      receiveLoop newSession
+        (plaintext, nextSession) <-
+          orFail $
+            decryptMessage sentSession reply
+
+        BS.putStrLn plaintext
+
+        sendLoop nextSession
 
 demoClientServer ::
   PeerConfig -> -- client config
