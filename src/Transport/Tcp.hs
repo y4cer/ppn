@@ -2,6 +2,7 @@ module Transport.Tcp where
 
 import           Client
 import           Config.Peer
+import           Control.Exception
 import           Network.Socket
 import           Server
 import           System.IO
@@ -14,30 +15,31 @@ newSocket :: IO Socket
 newSocket = socket AF_INET Stream defaultProtocol
 
 serv :: PeerConfig -> IO ()
-serv config = do
-  listener <- newSocket
-  bind listener address
-  listen listener 1
+serv config =
+  bracket acquireHandle hClose $ \handle -> do
+    hSetBinaryMode handle True
+    runServer config (Stdio handle handle)
+  where
+    acquireHandle :: IO Handle
+    acquireHandle =
+      bracketOnError newSocket close $
+        \listener -> do
+          bind listener address
+          listen listener 1
 
-  (conn, _) <- accept listener
-
-  close listener
-
-  handle <- socketToHandle conn ReadWriteMode
-  hSetBinaryMode handle True
-
-  runServer config (Stdio handle handle)
-
-  hClose handle
+          bracketOnError
+            (fst <$> accept listener)
+            close
+            (\conn -> socketToHandle conn ReadWriteMode)
 
 clien :: PeerConfig -> IO ()
-clien config = do
-  sock <- newSocket
-  connect sock address
-
-  handle <- socketToHandle sock ReadWriteMode
-  hSetBinaryMode handle True
-
-  runClient config (Stdio handle handle)
-
-  hClose handle
+clien config =
+  bracket acquireHandle hClose $ \handle -> do
+    hSetBinaryMode handle True
+    runClient config (Stdio handle handle)
+  where
+    acquireHandle :: IO Handle
+    acquireHandle =
+      bracketOnError newSocket close $ \sock -> do
+        connect sock address
+        socketToHandle sock ReadWriteMode
