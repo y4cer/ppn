@@ -4,6 +4,7 @@ import           Config.Peer
 import           Control.Monad         (unless)
 import qualified Data.ByteString.Char8 as BS
 import           Handshake
+import qualified Logging
 import           System.IO             (isEOF)
 import           Transport.Class
 
@@ -16,6 +17,7 @@ runClient ::
   t ->
   IO ()
 runClient client transport = do
+  logMessage "Sending handshake"
   clientEphemeral <- genEphemeralKey
 
   (msg, clientHandshake) <-
@@ -36,10 +38,14 @@ runClient client transport = do
     orFail $
       encryptMessage session "ready"
 
+  logMessage "sending 'ready' packet"
   sendPacket transport confirmation
 
+  logMessage "entering sending loop"
   sendLoop nextSession
   where
+    logMessage :: String -> IO ()
+    logMessage = Logging.logMessage Logging.StdoutTransport . ("[client] " <>)
     sendLoop session = do
       end <- isEOF
       unless end $ do
@@ -62,32 +68,3 @@ runClient client transport = do
         BS.putStrLn plaintext
 
         sendLoop nextSession
-
-demoClientServer ::
-  PeerConfig -> -- client config
-  PeerConfig -> -- server config
-  IO ()
-demoClientServer client server = do
-  clientEphemeral <- genEphemeralKey
-  serverEphemeral <- genEphemeralKey
-
-  let res = do
-        (msg, clientHandshake) <- startClientHandshake client clientEphemeral
-
-        (reply, pendingServerSession) <- respondServerHandshake server serverEphemeral msg
-
-        clientSession <- finishClientHandshake clientHandshake reply
-
-        (confirmation, newClientSession) <-
-          encryptMessage clientSession "ready"
-
-        serverSession <-
-          finishServerHandshake pendingServerSession confirmation
-
-        pure (newClientSession, serverSession)
-
-  case res of
-    Left _err              -> print _err
-    Right _clientHandshake -> print 2
-
-  print 1

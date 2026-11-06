@@ -30,8 +30,8 @@ library
       Config.Peer
       Errors
       Handshake
+      Logging
       Options
-      Playground
       Server
       Transport.Class
       Transport.Stdio
