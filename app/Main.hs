@@ -2,6 +2,7 @@ module Main (main) where
 
 import           Client
 import           Config.File
+import           Network.Socket
 import           Options
 import           Options.Applicative
 import           Server
@@ -18,6 +19,9 @@ main = cmd =<< execParser opts
             <> header "ppn - a secure client-server communication based on Noise KX protocol"
         )
 
+address :: SockAddr
+address = SockAddrInet 13337 (tupleToHostAddress (127, 0, 0, 1))
+
 cmd :: Command -> IO ()
 cmd (ConfigGen filePath) = do
   genKeysToFile (filePath <> ".key")
@@ -28,5 +32,5 @@ cmd (Run mode filepath) = do
   transport <- stdioTransport
 
   case mode of
-    Initiator -> clien config -- runClient config transport
-    Responder -> serv config -- runServer config transport
+    Initiator -> withTcpClient address $ runClient config
+    Responder -> withTcpServer address $ runServer config

@@ -58,6 +58,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - ppn
+    - network
 
 tests:
   ppn-test:

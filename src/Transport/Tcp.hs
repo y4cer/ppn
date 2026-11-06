@@ -3,22 +3,35 @@ module Transport.Tcp where
 import           Client
 import           Config.Peer
 import           Control.Exception
+import qualified Logging
 import           Network.Socket
 import           Server
 import           System.IO
 import           Transport.Stdio
 
-address :: SockAddr
-address = SockAddrInet 13337 (tupleToHostAddress (127, 0, 0, 1))
-
 newSocket :: IO Socket
 newSocket = socket AF_INET Stream defaultProtocol
 
-serv :: PeerConfig -> IO ()
-serv config =
-  bracket acquireHandle hClose $ \handle -> do
-    hSetBinaryMode handle True
-    runServer config (Stdio handle handle)
+logMessage :: String -> IO ()
+logMessage = Logging.logMessage Logging.StdoutTransport
+
+withTransport :: IO Handle -> (StdioTransport -> IO a) -> IO a
+withTransport acquireHandle action =
+  bracket
+    acquireHandle
+    ( \handle' ->
+        do
+          hClose handle'
+          logMessage "[transport] error with handle"
+    )
+    ( \handle' -> do
+        hSetBinaryMode handle' True
+        action (Stdio handle' handle')
+    )
+
+withTcpServer :: SockAddr -> (StdioTransport -> IO ()) -> IO ()
+withTcpServer address action =
+  withTransport acquireHandle action
   where
     acquireHandle :: IO Handle
     acquireHandle =
@@ -29,17 +42,25 @@ serv config =
 
           bracketOnError
             (fst <$> accept listener)
-            close
-            (\conn -> socketToHandle conn ReadWriteMode)
+            ( \sock -> do
+                close sock
+                logMessage "[server] error in connection socket"
+            )
+            (\sock -> socketToHandle sock ReadWriteMode)
 
-clien :: PeerConfig -> IO ()
-clien config =
-  bracket acquireHandle hClose $ \handle -> do
-    hSetBinaryMode handle True
-    runClient config (Stdio handle handle)
+withTcpClient :: SockAddr -> (StdioTransport -> IO ()) -> IO ()
+withTcpClient address action =
+  withTransport acquireHandle action
   where
     acquireHandle :: IO Handle
     acquireHandle =
-      bracketOnError newSocket close $ \sock -> do
-        connect sock address
-        socketToHandle sock ReadWriteMode
+      bracketOnError
+        newSocket
+        ( \sock -> do
+            close sock
+            logMessage "[client] error in connection socket"
+        )
+        ( \sock -> do
+            connect sock address
+            socketToHandle sock ReadWriteMode
+        )
